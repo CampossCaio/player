@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player</title>
+</head>
+<body>
+  <video controls height="500"  id="video"> -->
+    <!-- <track label="English" kind="subtitles" srclang="en" src="http://localhost:3333/subtitle/d2qYdWORBY-1548960206540_EN.vtt" default>
+    <track label="Portuguese" kind="subtitles" srclang="pt" src="http://localhost:3333/subtitle/d2qYdWORBY-1548960181597_PT_BR.vtt"> -->
+  </video>
+
+  <script>
+    let videoSrc;
+
+    fetch('http://localhost:3333/videos')
+    .then(result => {
+      const videoSrc = result.url;
+    
+      
+      var video = document.getElementById('video');
+      console.log(video.textTracks);
+     //var videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+      if (Hls.isSupported()) {
+        var hls = new Hls();
+        console.log(videoSrc)
+        hls.loadSource(videoSrc);
+      
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+        console.log(data);
+      });
+
+        console.log('Subtitles:', hls.subtitleTracks)
+      }
+    
+      else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        console.log('shushsushuhs')
+        video.src = videoSrc;
+      }
+    });
+  </script>
+</body>
+</html>
