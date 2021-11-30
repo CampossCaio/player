@@ -29,14 +29,17 @@ master_playlist+="#EXTM3U
 
 
 #start conversion
-echo -e "Executing command:\nffmpeg"
- docker run -v $(pwd):$(pwd) -w $(pwd)\
-        jrottenberg/ffmpeg:4.4-scratch -stats \
- -i ${source} -vf scale=w=640:h=360:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 800k -maxrate 856k -bufsize 1200k -b:a 96k -hls_segment_filename ${folderName}/360/seguiment-%03d.ts ${folderName}/360/360.m3u8 \
--vf scale=w=842:h=480:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 1400k -maxrate 1498k -bufsize 2100k -b:a 128k -hls_segment_filename ${folderName}/480/seguiment-%03d.ts ${folderName}/480/480.m3u8 \
--vf scale=w=1280:h=720:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 2800k -maxrate 2996k -bufsize 4200k -b:a 128k -hls_segment_filename ${folderName}/720/seguiment-%03d.ts ${folderName}/720/720.m3u8 \
--vf scale=w=1920:h=1080:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 5000k -maxrate 5350k -bufsize 7500k -b:a 192k -hls_segment_filename ${folderName}/1080/seguiment-%03d.ts ${folderName}/1080/1080.m3u8
+# echo -e "Executing command:\nffmpeg"
+#  docker run -v $(pwd):$(pwd) -w $(pwd)\
+#         jrottenberg/ffmpeg:4.4-scratch -stats \
+#  -i ${source} -vf scale=w=640:h=360:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 800k -maxrate 856k -bufsize 1200k -b:a 96k -hls_segment_filename ${folderName}/360/seguiment-%03d.ts ${folderName}/360/360.m3u8 \
+# -vf scale=w=842:h=480:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 1400k -maxrate 1498k -bufsize 2100k -b:a 128k -hls_segment_filename ${folderName}/480/seguiment-%03d.ts ${folderName}/480/480.m3u8 \
+# -vf scale=w=1280:h=720:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 2800k -maxrate 2996k -bufsize 4200k -b:a 128k -hls_segment_filename ${folderName}/720/seguiment-%03d.ts ${folderName}/720/720.m3u8 \
+# -vf scale=w=1920:h=1080:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 5000k -maxrate 5350k -bufsize 7500k -b:a 192k -hls_segment_filename ${folderName}/1080/seguiment-%03d.ts ${folderName}/1080/1080.m3u8
 
+echo -e "Executing command:\nffmpeg"
+    
+ffmpeg -i ${source} -vf scale=w=640:h=360:force_original_aspect_ratio=decrease -c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v 800k -maxrate 856k -bufsize 1200k -b:a 96k -hls_segment_filename ${folderName}/360/seguiment-%03d.ts ${folderName}/360/360.m3u8
 # create master playlist file
 echo -e "${master_playlist}" > ${folderName}/master.m3u8
 
