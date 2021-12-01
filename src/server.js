@@ -6,8 +6,9 @@ const fs = require('fs');
 const { exec, spawn } = require('child_process');
 const cors = require('cors');
 
-const filePath = path.resolve('./src/videos/1');
+let filePath = path.resolve('./src/videos');
 const scriptPath = path.resolve('./teste.sh');
+let mediaCode;
 
 const app = express();
 app.use(cors());
@@ -23,9 +24,13 @@ app.get('/opa', (req, res) => {
   res.send('opa!');
 });
 
-app.get('/videos', async (req, res) => {
+app.get('/videos/:mediaCode', async (req, res) => {
+  const { mediaCode: code } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
-  fs.readFile(`${filePath}/master.m3u8`, function(error, content) {
+
+  mediaCode = code;
+  
+  fs.readFile(`${filePath}/${mediaCode}/master.m3u8`, function(error, content) {
 
     if (error) {
       return console.error(error);
@@ -35,12 +40,12 @@ app.get('/videos', async (req, res) => {
   });
 });
 
-app.get('/:resolution/:id', async (req, res) => {
+app.get('/videos/:resolution/:id', async (req, res) => {
  
   const { resolution, id } =  req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
-  fs.readFile(`${filePath}/${resolution}/${id}`, function(error, content) {
+  fs.readFile(`${filePath}/${mediaCode}/${resolution}/${id}`, function(error, content) {
 
     if (error) {
       return console.error(error);
@@ -50,20 +55,20 @@ app.get('/:resolution/:id', async (req, res) => {
   });
 });
 
-app.get('/subtitle/:id', async (req, res) => {
+// app.get('/subtitle/:id', async (req, res) => {
  
-  const { id } =  req.params;
+//   const { id } =  req.params;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  fs.readFile(`${filePath}/subtitle/${id}`, function(error, content) {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   fs.readFile(`${filePath}/subtitle/${id}`, function(error, content) {
 
-    if (error) {
-      return console.error(error);
-    }
+//     if (error) {
+//       return console.error(error);
+//     }
     
-    res.end(content, 'utf-8');
-  });
-});
+//     res.end(content, 'utf-8');
+//   });
+// });
 
 app.post('/videos',upload.single('video'), async (req, res) => {
   const { filename } = req.file;
@@ -76,7 +81,9 @@ app.post('/videos',upload.single('video'), async (req, res) => {
     console.log('Deu bom!');
   });
 
-  return res.send('');
+  const mediaCode = filename.split('.')[0];
+
+  return res.json(mediaCode);
 });
 
 

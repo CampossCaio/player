@@ -13,37 +13,96 @@
     <!-- <track label="English" kind="subtitles" srclang="en" src="http://localhost:3333/subtitle/d2qYdWORBY-1548960206540_EN.vtt" default>
     <track label="Portuguese" kind="subtitles" srclang="pt" src="http://localhost:3333/subtitle/d2qYdWORBY-1548960181597_PT_BR.vtt"> -->
   </video>
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <div>
+      <input id='input' placeholder="Código da mídia" type="text">
+      <button id='button'>Enviar</button>
+    </div>
+
+    <div>
+      <input id='inputFile' placeholder="" type="file">
+      <button id='buttonUpload'>Enviar</button>
+    </div>
+  </div>
 
   <script>
     let videoSrc;
-
-    fetch('https://shrouded-earth-29243.herokuapp.com/videos')
-    .then(result => {
-      const videoSrc = result.url;
+    //const url = 'http://localhost:3333';
+    const url = 'https://shrouded-earth-29243.herokuapp.com';
     
-      
-      var video = document.getElementById('video');
-      console.log(video.textTracks);
-     //var videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-      if (Hls.isSupported()) {
-        var hls = new Hls();
-        console.log(videoSrc)
-        hls.loadSource(videoSrc);
-      
-        hls.attachMedia(video);
+    // Change media code
+    const input = document.querySelector('#input');
+    const button = document.querySelector('#button');
+    
+    // Upload video
+    const inputFile = document.querySelector('#inputFile');
+    const buttonUpload = document.querySelector('#buttonUpload');
 
-        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-        console.log(data);
+
+    function getVideo(mediaCode) {
+      fetch(`${url}/videos/${mediaCode}`)
+      .then(result => {
+        const videoSrc = result.url;
+      
+        
+        var video = document.getElementById('video');
+        //console.log(video.textTracks);
+
+        if (Hls.isSupported()) {
+          var hls = new Hls();
+          console.log(videoSrc)
+          hls.loadSource(videoSrc);
+        
+          hls.attachMedia(video);
+
+          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          //console.log(data);
+        });
+
+          //console.log('Subtitles:', hls.subtitleTracks)
+        }
+      
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          console.log('shushsushuhs')
+          video.src = videoSrc;
+        }
       });
+    }
 
-        console.log('Subtitles:', hls.subtitleTracks)
+    function onMediaCodeChange() {
+      if(!input.value) return alert('Informe o código da mídia');
+
+      getVideo(input.value);
+    }
+
+    function uploadVideo() {
+
+      if (!inputFile.files[0]) {
+        return alert('Insira um video mp4');
       }
+
+      const data = new FormData();
+      data.append('video', inputFile.files[0]);
+
+      try {
+        fetch(`${url}/videos`, {
+          method: 'POST',
+          body: data
+        }).then((result) => result.json()).then((result => alert(`Código do vídeo enviado: ${result}`)))
+
+        alert('Upload realizado com sucesso!')
+      } catch(errr) {
+        alert('Falha ao realizar upload!');
+      }
+    }
+
+    getVideo(1);
+
+
+    button.addEventListener('click', onMediaCodeChange);
+    buttonUpload.addEventListener('click', () => console.log('inputFile: ', uploadVideo()));
+    //fetch('https://shrouded-earth-29243.herokuapp.com/videos')
     
-      else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        console.log('shushsushuhs')
-        video.src = videoSrc;
-      }
-    });
   </script>
 </body>
 </html>
